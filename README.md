@@ -1,4 +1,4 @@
-# Household Energy_Consumption end to end Portfolio
+# Household Energy Consumption end to end Portfolio
 This repository dedicated for end-to-end Household energy consumption predictor, a regression problem to predict household energy consumption based on  usage behavior. This repository dedicated as part of Purwadhika's machine learning project collaborated with Rizan Pradiya
 
 # Streamlit Deploy
