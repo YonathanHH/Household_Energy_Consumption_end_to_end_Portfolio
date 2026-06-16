@@ -1,8 +1,8 @@
 # ⚡ Calgary Household Energy Consumption — End-to-End ML Portfolio
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python) ![Streamlit](https://img.shields.io/badge/Streamlit-Live-red?logo=streamlit) ![Kaggle](https://img.shields.io/badge/Dataset-Kaggle-20BEFF?logo=kaggle) ![License](https://img.shields.io/badge/License-MIT-green)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python) ![Streamlit](https://img.shields.io/badge/Streamlit-Live-red?logo=streamlit) ![Kaggle](https://img.shields.io/badge/Dataset-Kaggle-20BEFF?logo=kaggle) ![TensorFlow](https://img.shields.io/badge/TensorFlow-LSTM-FF6F00?logo=tensorflow) ![License](https://img.shields.io/badge/License-MIT-green)
 
-An end-to-end machine learning project that predicts **daily household electricity consumption (kWh)** for 140 synthetic Calgary, Canada households over 2 years (2024–2025). The project covers the full ML pipeline: data exploration, feature engineering, baseline modelling, hyperparameter tuning, and a deployed Streamlit web app.
+An end-to-end machine learning project that predicts and forecasts **daily household electricity consumption (kWh)** for 140 synthetic Calgary, Canada households over 2 years (2024–2025). The project covers the full ML pipeline: exploratory data analysis, feature engineering, regression baseline modelling, hyperparameter tuning, and LSTM time series forecasting — deployed via a live Streamlit web app.
 
 ---
 
@@ -17,11 +17,12 @@ An end-to-end machine learning project that predicts **daily household electrici
 
 ```
 📦 Household_Energy_Consumption_end_to_end_Portfolio
-├── 📓 Calgary_Household_Energy_EDA_Regression.ipynb  # Full notebook: EDA + Modelling
-├── 🌐 app.py                                         # Streamlit prediction app
-├── 🤖 best_model.sav                                 # Trained XGBoost model (GridSearchCV tuned)
-├── 🗃️ calgary_household_energy_synthetic.csv         # Synthetic dataset (102,340 rows)
-├── 📋 requirements.txt                               # Python dependencies
+├── 📓 Calgary_Household_Energy_EDA_Regression.ipynb    # Notebook 1: EDA + Regression
+├── 📓 Calgary_Household_Energy_LSTM_Forecasting.ipynb  # Notebook 2: LSTM Time Series Forecasting
+├── 🌐 app.py                                           # Streamlit prediction app
+├── 🤖 best_model.sav                                   # Trained XGBoost model (GridSearchCV tuned)
+├── 🗃️ calgary_household_energy_synthetic.csv           # Synthetic dataset (102,340 rows)
+├── 📋 requirements.txt                                 # Python dependencies
 └── 📖 README.md
 ```
 
@@ -58,7 +59,9 @@ An end-to-end machine learning project that predicts **daily household electrici
 
 ---
 
-## 🔬 Notebook Outline
+## 📓 Notebook 1 — EDA & Regression
+
+**File:** `Calgary_Household_Energy_EDA_Regression.ipynb`
 
 ### Part 1 — Exploratory Data Analysis (EDA)
 - Dataset shape, types, missing values
@@ -85,9 +88,30 @@ An end-to-end machine learning project that predicts **daily household electrici
 | 4 | Random Forest | Ensemble, handles interactions |
 | 5 | XGBoost | Gradient boosting baseline |
 
-**Tuned Model:**
-- XGBoost with `GridSearchCV` (5-fold CV)
-- Metrics: RMSE, MAE, R²
+**Tuned Model:** XGBoost with `GridSearchCV` (5-fold CV)
+
+---
+
+## 📓 Notebook 2 — LSTM Time Series Forecasting
+
+**File:** `Calgary_Household_Energy_LSTM_Forecasting.ipynb`
+
+Forecasts the next N days of daily kWh for a given household using a **multivariate many-to-one LSTM** with a 30-day lookback window.
+
+### Sections
+1. **Time Series EDA** — Aggregate trend, monthly boxplot, autocorrelation (ACF)
+2. **Sequence Building** — Sliding window sequences, MinMaxScaler, 70/15/15 split
+3. **LSTM Architecture** — `LSTM(128) → Dropout → LSTM(64) → Dropout → Dense(32) → Dense(1)`
+4. **Training** — EarlyStopping, ReduceLROnPlateau, ModelCheckpoint callbacks
+5. **Evaluation** — RMSE, MAE, R² on test set; Actual vs Predicted plot; Residual analysis
+6. **Multi-Step Forecast** — Recursive 30-day ahead forecast with ±12% confidence band
+7. **Model Export** — Saves `lstm_model.keras`, `lstm_scaler.pkl`, `lstm_target_scaler.pkl`
+
+### LSTM Input Features
+```
+Daily_kWh, Outside_Temperature_C, Has_EV_Car,
+Household_Size, Living_Area_m2, AC_Hours_Used
+```
 
 ---
 
@@ -95,18 +119,9 @@ An end-to-end machine learning project that predicts **daily household electrici
 
 The app lets users input household parameters and receive a real-time predicted daily energy consumption. Try it live at 👉 [householdelectricityconsumption.streamlit.app](https://householdelectricityconsumption.streamlit.app/)
 
-**Inputs:**
-- Outside temperature (°C)
-- Household size (2–6 people)
-- Living area (m²)
-- EV ownership
-- AC hours used
-- Month & weekend toggle
+**Inputs:** Outside temperature, household size, living area, EV ownership, AC hours, month, weekend toggle
 
-**Outputs:**
-- Predicted `Daily_kWh`
-- Estimated daily & monthly cost in CAD
-- Consumption tier label (🟢 Low / 🟡 Medium / 🔴 High)
+**Outputs:** Predicted `Daily_kWh` · Estimated daily & monthly cost in CAD · Consumption tier (🟢 Low / 🟡 Medium / 🔴 High)
 
 ### Running Locally
 
@@ -142,8 +157,9 @@ The synthetic dataset is physically motivated, not random noise. Daily kWh is th
 | Language | Python 3.10+ |
 | Data | pandas, numpy |
 | Visualisation | matplotlib, seaborn, plotly |
-| Modelling | scikit-learn, xgboost |
+| Regression | scikit-learn, xgboost |
 | Tuning | GridSearchCV (5-fold CV) |
+| Forecasting | TensorFlow / Keras (LSTM) |
 | App | Streamlit |
 | Dataset hosting | Kaggle |
 | Version control | GitHub |
@@ -152,7 +168,7 @@ The synthetic dataset is physically motivated, not random noise. Daily kWh is th
 
 ## 📈 Results
 
-### Model Comparison
+### Notebook 1 — Regression Model Comparison
 
 | Model | RMSE | MAE | R² |
 |---|---|---|---|
@@ -172,6 +188,17 @@ The synthetic dataset is physically motivated, not random noise. Daily kWh is th
 | 🥉 3 | `Household_Size` | More occupants → higher base + lighting load |
 
 > **Note:** The R² of 0.71 reflects realistic prediction difficulty — EV charging days introduce stochastic variance (~65% charging probability) that is intentionally non-deterministic in the dataset generation.
+
+### Notebook 2 — LSTM Forecasting
+
+| Metric | Value |
+|---|---|
+| RMSE | TBD |
+| MAE | TBD |
+| R² | TBD |
+| Lookback Window | 30 days |
+| Forecast Horizon | 30 days |
+| Architecture | `LSTM(128) → Dropout → LSTM(64) → Dropout → Dense(32) → Dense(1)` |
 
 ---
 
