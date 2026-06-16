@@ -1,6 +1,6 @@
 # ⚡ Calgary Household Energy Consumption — End-to-End ML Portfolio
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python) ![Streamlit](https://img.shields.io/badge/Streamlit-App-red?logo=streamlit) ![Kaggle](https://img.shields.io/badge/Dataset-Kaggle-20BEFF?logo=kaggle) ![License](https://img.shields.io/badge/License-MIT-green)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python) ![Streamlit](https://img.shields.io/badge/Streamlit-Live-red?logo=streamlit) ![Kaggle](https://img.shields.io/badge/Dataset-Kaggle-20BEFF?logo=kaggle) ![License](https://img.shields.io/badge/License-MIT-green)
 
 An end-to-end machine learning project that predicts **daily household electricity consumption (kWh)** for 140 synthetic Calgary, Canada households over 2 years (2024–2025). The project covers the full ML pipeline: data exploration, feature engineering, baseline modelling, hyperparameter tuning, and a deployed Streamlit web app.
 
@@ -8,7 +8,7 @@ An end-to-end machine learning project that predicts **daily household electrici
 
 ## 🌐 Live Demo
 
-> 🚀 [**Launch the Streamlit App →**](https://your-streamlit-url.streamlit.app)  
+> 🚀 [**Launch the Streamlit App →**](https://householdelectricityconsumption.streamlit.app/)
 > 📊 [**View the Dataset on Kaggle →**](https://www.kaggle.com/datasets/yonathanhary/household-energy-consumption-synthetic/data)
 
 ---
@@ -19,12 +19,13 @@ An end-to-end machine learning project that predicts **daily household electrici
 📦 Household_Energy_Consumption_end_to_end_Portfolio
 ├── 📓 Calgary_Household_Energy_EDA_Regression.ipynb  # Full notebook: EDA + Modelling
 ├── 🌐 app.py                                         # Streamlit prediction app
+├── 🤖 best_model.sav                                 # Trained XGBoost model (GridSearchCV tuned)
+├── 🗃️ calgary_household_energy_synthetic.csv         # Synthetic dataset (102,340 rows)
 ├── 📋 requirements.txt                               # Python dependencies
 └── 📖 README.md
 ```
 
-> **Note:** The dataset (`calgary_household_energy_synthetic.csv`) is hosted on Kaggle.  
-> The notebook downloads it automatically via the Kaggle API.
+> 📊 The dataset is also publicly available on [Kaggle](https://www.kaggle.com/datasets/yonathanhary/household-energy-consumption-synthetic/data).
 
 ---
 
@@ -71,7 +72,7 @@ An end-to-end machine learning project that predicts **daily household electrici
 ### Part 2 — Feature Engineering
 - Extract `Month`, `DayOfWeek`, `IsWeekend`, `Season` from `Date`
 - Heating Degree Day (HDD) and Cooling Degree Day (CDD) features
-- Encode categorical columns
+- Monthly sunlight hours mapping (Calgary)
 
 ### Part 3 — Regression Modelling
 
@@ -92,7 +93,7 @@ An end-to-end machine learning project that predicts **daily household electrici
 
 ## 🖥️ Streamlit App
 
-The app lets users input household parameters and receive a real-time predicted daily energy consumption.
+The app lets users input household parameters and receive a real-time predicted daily energy consumption. Try it live at 👉 [householdelectricityconsumption.streamlit.app](https://householdelectricityconsumption.streamlit.app/)
 
 **Inputs:**
 - Outside temperature (°C)
@@ -100,12 +101,12 @@ The app lets users input household parameters and receive a real-time predicted 
 - Living area (m²)
 - EV ownership
 - AC hours used
-- Day of week / Is weekend
+- Month & weekend toggle
 
 **Outputs:**
 - Predicted `Daily_kWh`
 - Estimated daily & monthly cost in CAD
-- Consumption tier label (Low / Medium / High)
+- Consumption tier label (🟢 Low / 🟡 Medium / 🔴 High)
 
 ### Running Locally
 
@@ -142,7 +143,7 @@ The synthetic dataset is physically motivated, not random noise. Daily kWh is th
 | Data | pandas, numpy |
 | Visualisation | matplotlib, seaborn, plotly |
 | Modelling | scikit-learn, xgboost |
-| Tuning | GridSearchCV |
+| Tuning | GridSearchCV (5-fold CV) |
 | App | Streamlit |
 | Dataset hosting | Kaggle |
 | Version control | GitHub |
@@ -151,7 +152,7 @@ The synthetic dataset is physically motivated, not random noise. Daily kWh is th
 
 ## 📈 Results
 
-> Results will be updated after notebook execution.
+### Model Comparison
 
 | Model | RMSE | MAE | R² |
 |---|---|---|---|
@@ -160,17 +161,27 @@ The synthetic dataset is physically motivated, not random noise. Daily kWh is th
 | Decision Tree | TBD | TBD | TBD |
 | Random Forest | TBD | TBD | TBD |
 | XGBoost (baseline) | TBD | TBD | TBD |
-| **XGBoost (tuned)** | **TBD** | **TBD** | **TBD** |
+| **XGBoost (tuned — GridSearchCV)** | **3.786** | **2.572** | **0.7148** |
+
+### 🔑 Top Feature Importances (Tuned XGBoost)
+
+| Rank | Feature | Interpretation |
+|---|---|---|
+| 🥇 1 | `Has_EV_Car` | EV charging dominates daily consumption (~8–14 kWh/session) |
+| 🥈 2 | `Sunlight_Hours` | Fewer daylight hours → more artificial lighting load |
+| 🥉 3 | `Household_Size` | More occupants → higher base + lighting load |
+
+> **Note:** The R² of 0.71 reflects realistic prediction difficulty — EV charging days introduce stochastic variance (~65% charging probability) that is intentionally non-deterministic in the dataset generation.
 
 ---
 
 ## 👤 Author
 
-**Yonathan Hary Hutagalung**  
-MSc Sustainable Energy Science — Reykjavik University  
-BSc Geology — University of Canterbury  
+**Yonathan Hary Hutagalung**
+MSc Sustainable Energy Science — Reykjavik University
+BSc Geology — University of Canterbury
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://www.linkedin.com/in/yonathanhary)  
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://www.linkedin.com/in/yonathanhary)
 [![Kaggle](https://img.shields.io/badge/Kaggle-Profile-20BEFF?logo=kaggle)](https://www.kaggle.com/yonathanhary)
 
 ---
