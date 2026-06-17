@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python) ![Streamlit](https://img.shields.io/badge/Streamlit-Live-red?logo=streamlit) ![Kaggle](https://img.shields.io/badge/Dataset-Kaggle-20BEFF?logo=kaggle) ![TensorFlow](https://img.shields.io/badge/TensorFlow-LSTM-FF6F00?logo=tensorflow) ![License](https://img.shields.io/badge/License-MIT-green)
 
-An end-to-end machine learning project that predicts and forecasts **daily household electricity consumption (kWh)** for 140 synthetic Calgary, Canada households over 2 years (2024–2025). The project covers the full ML pipeline: exploratory data analysis, feature engineering, regression baseline modelling, hyperparameter tuning, and LSTM time series forecasting — deployed via a live Streamlit web app.
+An end-to-end machine learning project that predicts and forecasts **daily household electricity consumption (kWh)** for 140 synthetic Calgary, Canada households over 2 years (2024–2025). The project covers the full ML pipeline: exploratory data analysis, feature engineering, regression baseline modelling, hyperparameter tuning, and LSTM time series forecasting — all deployed via a live two-tab Streamlit web app.
 
 ---
 
@@ -19,8 +19,12 @@ An end-to-end machine learning project that predicts and forecasts **daily house
 📦 Household_Energy_Consumption_end_to_end_Portfolio
 ├── 📓 Calgary_Household_Energy_EDA_Regression.ipynb    # Notebook 1: EDA + Regression
 ├── 📓 Calgary_Household_Energy_LSTM_Forecasting.ipynb  # Notebook 2: LSTM Time Series Forecasting
-├── 🌐 app.py                                           # Streamlit prediction app
+├── 🌐 app.py                                           # Streamlit app (2 tabs: XGBoost + LSTM)
 ├── 🤖 best_model.sav                                   # Trained XGBoost model (GridSearchCV tuned)
+├── 🧠 lstm_best.keras                                  # Best LSTM checkpoint (ModelCheckpoint)
+├── 🧠 lstm_model.keras                                 # Final exported LSTM model
+├── 💾 lstm_scaler.pkl                                  # MinMaxScaler for all features
+├── 💾 lstm_target_scaler.pkl                           # MinMaxScaler for target (Daily_kWh)
 ├── 🗃️ calgary_household_energy_synthetic.csv           # Synthetic dataset (102,340 rows)
 ├── 📋 requirements.txt                                 # Python dependencies
 └── 📖 README.md
@@ -117,11 +121,16 @@ Household_Size, Living_Area_m2, AC_Hours_Used
 
 ## 🖥️ Streamlit App
 
-The app lets users input household parameters and receive a real-time predicted daily energy consumption. Try it live at 👉 [householdelectricityconsumption.streamlit.app](https://householdelectricityconsumption.streamlit.app/)
+The app has **two tabs**, deployed at [householdelectricityconsumption.streamlit.app](https://householdelectricityconsumption.streamlit.app/):
 
-**Inputs:** Outside temperature, household size, living area, EV ownership, AC hours, month, weekend toggle
+| Tab | Model | Description |
+|---|---|---|
+| 🧠 XGBoost — Daily Prediction | XGBoost (GridSearchCV) | Input household profile + weather → predict a single day's kWh |
+| 📈 LSTM — Time Series Forecast | LSTM (TensorFlow/Keras) | Select a household → generate N-day ahead forecast with chart & table |
 
-**Outputs:** Predicted `Daily_kWh` · Estimated daily & monthly cost in CAD · Consumption tier (🟢 Low / 🟡 Medium / 🔴 High)
+**Tab 1 Outputs:** Predicted kWh · Daily & monthly cost in CAD · Consumption tier (🟢 Low / 🟡 Medium / 🔴 High)
+
+**Tab 2 Outputs:** Forecast chart (raw + 7-day smoothed + ±12% band) · Total forecast kWh & cost · Expandable forecast table
 
 ### Running Locally
 
@@ -160,7 +169,7 @@ The synthetic dataset is physically motivated, not random noise. Daily kWh is th
 | Regression | scikit-learn, xgboost |
 | Tuning | GridSearchCV (5-fold CV) |
 | Forecasting | TensorFlow / Keras (LSTM) |
-| App | Streamlit |
+| App | Streamlit (2-tab layout) |
 | Dataset hosting | Kaggle |
 | Version control | GitHub |
 
@@ -197,7 +206,7 @@ The synthetic dataset is physically motivated, not random noise. Daily kWh is th
 | MAE | TBD |
 | R² | TBD |
 | Lookback Window | 30 days |
-| Forecast Horizon | 30 days |
+| Forecast Horizon | Up to 90 days (configurable in app) |
 | Architecture | `LSTM(128) → Dropout → LSTM(64) → Dropout → Dense(32) → Dense(1)` |
 
 ---
